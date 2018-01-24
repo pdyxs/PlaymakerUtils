@@ -77,6 +77,10 @@ public abstract class FSMWrapper<TEventEnum> :
 
     void ApplyEvents()
     {
+        if (Application.isPlaying) {
+            return;
+        }
+
         if (!typeof(TEventEnum).IsEnum) 
         {
             throw new ArgumentException("FSMWrapper T must be an enumerated type");
