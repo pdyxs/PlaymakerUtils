@@ -6,7 +6,7 @@ namespace HutongGames.PlayMaker.Actions
 {
     [ActionCategory("Object Pool")]
     [Tooltip("Recycles a GameObject")]
-    public class RecycleAction : ActionDo
+    public class Recycle : ActionDo
     {
         [RequiredField]
         [Tooltip("The Gameobject to Recycle")]
