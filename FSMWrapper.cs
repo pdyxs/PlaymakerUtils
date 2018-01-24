@@ -36,7 +36,12 @@ using UnityEngine;
 //
 
 [RequireComponent(typeof(PlayMakerFSM))]
-public abstract class FSMWrapper<TEventEnum> : MonoBehaviour, ISerializationCallbackReceiver where TEventEnum:IConvertible
+public abstract class FSMWrapper<TEventEnum> :
+    MonoBehaviour
+#if UNITY_EDITOR
+    ,ISerializationCallbackReceiver
+#endif
+    where TEventEnum:IConvertible
 {
     private PlayMakerFSM m_fsm;
     public PlayMakerFSM fsm
