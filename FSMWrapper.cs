@@ -76,7 +76,7 @@ public abstract class FSMWrapper<TEventEnum> :
 
     void ApplyEvents()
     {
-        if (Application.isPlaying) {
+        if (Application.isPlaying || this == null || gameObject == null) {
             return;
         }
 
