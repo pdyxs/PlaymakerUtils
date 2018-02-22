@@ -9,7 +9,6 @@ using System.Linq;
 [System.Serializable]
 public abstract class FSMVariableWrapper
 {
-    [SerializeField]
     public string name;
 
     protected PlayMakerFSM fsm;

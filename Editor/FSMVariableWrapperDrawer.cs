@@ -29,7 +29,7 @@ public class FSMVariableWrapperDrawer : PropertyDrawer {
 
         var name = property.FindPropertyRelative("name");
         if (name != null) {
-            name.stringValue = label.text;
+            name.stringValue = property.displayName;
         }
     }
 }
