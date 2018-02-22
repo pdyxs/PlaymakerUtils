@@ -262,6 +262,8 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
                     t.LinkStyle = FsmTransition.CustomLinkStyle.Circuit;
                 }
             }
+
+            state.SaveActions();
         }
 
         foreach (FSMVariableWrapper wrapper in GetWrappedVariables()) {
@@ -271,7 +273,7 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
             }
         }
 
-        targetFsm.UpdateStateChanges();
+        //targetFsm.UpdateStateChanges();
         targetFsm.ForcePreprocess();
         UnityEditor.EditorUtility.SetDirty(fsm);
     }

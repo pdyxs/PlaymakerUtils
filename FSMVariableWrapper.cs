@@ -58,7 +58,7 @@ public class FSMIntWrapper : FSMVariableWrapper<int>
 
     protected override void SetValue(int to)
     {
-        fsm.FsmVariables.FindFsmInt(name).SafeAssign(to);
+        fsm.FsmVariables.FindFsmInt(name).Value = to;
     }
 
 #if UNITY_EDITOR
@@ -81,7 +81,7 @@ public class FSMBoolWrapper : FSMVariableWrapper<bool>
 
     protected override void SetValue(bool to)
     {
-        fsm.FsmVariables.FindFsmBool(name).SafeAssign(to);
+        fsm.FsmVariables.FindFsmBool(name).Value = to;
     }
 
 #if UNITY_EDITOR
@@ -105,7 +105,7 @@ public class FSMEnumWrapper<TEnum> : FSMVariableWrapper<TEnum>
 
     protected override void SetValue(TEnum to)
     {
-        fsm.FsmVariables.FindFsmEnum(name).SafeAssign(to);
+        fsm.FsmVariables.FindFsmEnum(name).Value = (System.Enum)(object)to;
     }
 
 #if UNITY_EDITOR
@@ -128,7 +128,7 @@ public class FSMRectWrapper : FSMVariableWrapper<Rect>
 
     protected override void SetValue(Rect to)
     {
-        fsm.FsmVariables.FindFsmRect(name).SafeAssign(to);
+        fsm.FsmVariables.FindFsmRect(name).Value = to;
     }
 
 #if UNITY_EDITOR
@@ -151,7 +151,7 @@ public class FSMColorWrapper : FSMVariableWrapper<Color>
 
     protected override void SetValue(Color to)
     {
-        fsm.FsmVariables.FindFsmColor(name).SafeAssign(to);
+        fsm.FsmVariables.FindFsmColor(name).Value = to;
     }
 
 #if UNITY_EDITOR
@@ -174,7 +174,7 @@ public class FSMFloatWrapper : FSMVariableWrapper<float>
 
     protected override void SetValue(float to)
     {
-        fsm.FsmVariables.FindFsmFloat(name).SafeAssign(to);
+        fsm.FsmVariables.FindFsmFloat(name).Value = to;
     }
 
 #if UNITY_EDITOR
@@ -197,7 +197,7 @@ public class FSMStringWrapper : FSMVariableWrapper<string>
 
     protected override void SetValue(string to)
     {
-        fsm.FsmVariables.FindFsmString(name).SafeAssign(to);
+        fsm.FsmVariables.FindFsmString(name).Value = to;
     }
 
 #if UNITY_EDITOR
@@ -220,7 +220,7 @@ public class FSMTextureWrapper : FSMVariableWrapper<Texture>
 
     protected override void SetValue(Texture to)
     {
-        fsm.FsmVariables.FindFsmTexture(name).SafeAssign(to);
+        fsm.FsmVariables.FindFsmTexture(name).Value = to;
     }
 
 #if UNITY_EDITOR
@@ -243,7 +243,7 @@ public class FSMVector2Wrapper : FSMVariableWrapper<Vector2>
 
     protected override void SetValue(Vector2 to)
     {
-        fsm.FsmVariables.FindFsmVector2(name).SafeAssign(to);
+        fsm.FsmVariables.FindFsmVector2(name).Value = to;
     }
 
 #if UNITY_EDITOR
@@ -266,7 +266,7 @@ public class FSMVector3Wrapper : FSMVariableWrapper<Vector3>
 
     protected override void SetValue(Vector3 to)
     {
-        fsm.FsmVariables.FindFsmVector3(name).SafeAssign(to);
+        fsm.FsmVariables.FindFsmVector3(name).Value = to;
     }
 
 #if UNITY_EDITOR
@@ -289,7 +289,7 @@ public class FSMMaterialWrapper : FSMVariableWrapper<Material>
 
     protected override void SetValue(Material to)
     {
-        fsm.FsmVariables.FindFsmMaterial(name).SafeAssign(to);
+        fsm.FsmVariables.FindFsmMaterial(name).Value = to;
     }
 
 #if UNITY_EDITOR
@@ -312,7 +312,7 @@ public class FSMQuaternionWrapper : FSMVariableWrapper<Quaternion>
 
     protected override void SetValue(Quaternion to)
     {
-        fsm.FsmVariables.FindFsmQuaternion(name).SafeAssign(to);
+        fsm.FsmVariables.FindFsmQuaternion(name).Value = to;
     }
 
 #if UNITY_EDITOR
@@ -335,7 +335,7 @@ public class FSMGameObjectWrapper : FSMVariableWrapper<GameObject>
 
     protected override void SetValue(GameObject to)
     {
-        fsm.FsmVariables.FindFsmGameObject(name).SafeAssign(to);
+        fsm.FsmVariables.FindFsmGameObject(name).Value = to;
     }
 
 #if UNITY_EDITOR
