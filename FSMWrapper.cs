@@ -1,9 +1,11 @@
-﻿// cratesmith 2018
+﻿// cratesmith 2018, pdyxs 2018
 using System;
+using System.Collections;
 #if UNITY_EDITOR
 using System.Linq;
 #endif
 using HutongGames.PlayMaker;
+using HutongGames.PlayMaker.Actions;
 using UnityEngine;
 
 
@@ -35,12 +37,7 @@ using UnityEngine;
 //
 
 [RequireComponent(typeof(PlayMakerFSM))]
-public abstract class FSMWrapper<TEventEnum> :
-    MonoBehaviour
-#if UNITY_EDITOR
-    ,ISerializationCallbackReceiver
-#endif
-    where TEventEnum:IConvertible
+public abstract class FSMWrapper : MonoBehaviour
 {
     private PlayMakerFSM m_fsm;
     public PlayMakerFSM fsm
@@ -55,7 +52,37 @@ public abstract class FSMWrapper<TEventEnum> :
         }
     }
 
-    public void SendEvent(TEventEnum eventType)
+    public virtual void OnStateEntered(string state) { }
+
+#if UNITY_EDITOR
+    protected Fsm targetFsm
+    {
+        get
+        {
+            var root = UnityEditor.PrefabUtility.FindPrefabRoot(gameObject);
+            if (root != null && root != gameObject) {
+                FSMWrapper pfsmwrapper = root.GetComponent<FSMWrapper>();
+                if (pfsmwrapper != null)
+                {
+                    return pfsmwrapper.targetFsm;
+                }
+            }
+
+            return fsm.UsesTemplate ? fsm.FsmTemplate.fsm : fsm.Fsm;
+        }
+    }
+#endif
+}
+
+public abstract class FSMWrapper<TEventEnum> :
+    FSMWrapper
+#if UNITY_EDITOR
+    ,ISerializationCallbackReceiver
+#endif
+    where TEventEnum:IConvertible
+{
+
+    public virtual void SendEvent(TEventEnum eventType)
     {
         if (!typeof(TEventEnum).IsEnum) 
         {
@@ -71,18 +98,13 @@ public abstract class FSMWrapper<TEventEnum> :
 
     public void OnAfterDeserialize()
     {
-        UnityEditor.EditorApplication.delayCall += ApplyEvents;
+        UnityEditor.EditorApplication.delayCall += ApplyFSM;
     }
 
-    void ApplyEvents()
-    {
-        if (Application.isPlaying || this == null || gameObject == null) {
-            return;
-        }
-
-        if (!typeof(TEventEnum).IsEnum) 
+    protected virtual void ApplyFSM() {
+        if (Application.isPlaying || this == null || gameObject == null)
         {
-            throw new ArgumentException("FSMWrapper T must be an enumerated type");
+            return;
         }
 
         if (fsm == null)
@@ -90,16 +112,156 @@ public abstract class FSMWrapper<TEventEnum> :
             gameObject.AddComponent<PlayMakerFSM>();
         }
 
-        var targetFsm = fsm.UsesTemplate ? fsm.FsmTemplate.fsm:fsm.Fsm;
-        if (targetFsm==null)
+        if (targetFsm == null)
         {
             return;
         }
 
-        var eventNames = System.Enum.GetNames(typeof(TEventEnum));
+        ApplyEvents();
+    }
+
+    void ApplyEvents()
+    {
+        if (!typeof(TEventEnum).IsEnum) 
+        {
+            throw new ArgumentException("FSMWrapper TEventEnum must be an enumerated type");
+        }
+
+        var eventNames = Enum.GetNames(typeof(TEventEnum));
         var missingEventNames = eventNames.Where(x => targetFsm.Events.All(y => y.Name != x));
         targetFsm.Events = targetFsm.Events.Concat(missingEventNames.Select(x=>new FsmEvent(x)))
             .ToArray();
+    }
+#endif
+}
+
+public abstract class FSMWrapper<TEventEnum, TStateEnum> :
+    FSMWrapper<TEventEnum>
+    where TEventEnum : IConvertible
+    where TStateEnum : IConvertible
+{
+
+    public TStateEnum currentState
+    {
+        get; private set;
+    }
+
+    public override void OnStateEntered(string state)
+    {
+        currentState = (TStateEnum)Enum.Parse(typeof(TStateEnum), state);
+        OnStateEntered(currentState);
+    }
+
+    public abstract void OnStateEntered(TStateEnum state);
+
+    public override void SendEvent(TEventEnum eventType)
+    {
+        if (!EventsFrom(currentState).Contains(eventType))
+        {
+            Debug.LogError("Event " + eventType + " should not be fired" +
+                           " from current state " + currentState);
+        }
+
+        base.SendEvent(eventType);
+    }
+
+    protected abstract TEventEnum[] EventsFrom(TStateEnum state);
+
+    protected abstract FSMVariableWrapper[] GetWrappedVariables();
+
+    protected virtual void Awake()
+    {
+        foreach (var wrapper in GetWrappedVariables()) {
+            wrapper.Initialise(fsm);
+        }
+    }
+
+#if UNITY_EDITOR
+    protected override void ApplyFSM()
+    {
+        base.ApplyFSM();
+
+        if (Application.isPlaying || this == null || gameObject == null)
+        {
+            return;
+        }
+
+        if (targetFsm == null)
+        {
+            return;
+        }
+
+        if (gameObject.activeInHierarchy)
+        {
+            StartCoroutine(ApplyStates());
+        }
+    }
+
+    IEnumerator ApplyStates()
+    {
+        if (!typeof(TStateEnum).IsEnum)
+        {
+            throw new ArgumentException("FSMWrapper TStateEnum must be an enumerated type");
+        }
+
+        if (!targetFsm.Initialized) {
+            targetFsm.Init(this);
+        }
+
+        var stateNames = Enum.GetNames(typeof(TStateEnum));
+
+        var missingStateNames = stateNames.Where(x => targetFsm.States.All(y => y.Name != x));
+        targetFsm.States = targetFsm.States.Concat(missingStateNames.Select(x =>
+        {
+            var state = new FsmState(targetFsm);
+            state.Name = x;
+            return state;
+        })).ToArray();
+
+        foreach (TStateEnum s in Enum.GetValues(typeof(TStateEnum)))
+        {
+            var sn = Enum.GetName(typeof(TStateEnum), s);
+            FsmState state = targetFsm.GetState(sn);
+            state.ColorIndex = 5;
+            if (Array.Find(state.Actions, (a) => a is SignalWrapperAction) == null)
+            {
+                var newAction = new SignalWrapperAction();
+                state.Actions = state.Actions.Concat(
+                    new FsmStateAction[] { newAction }
+                ).ToArray();
+            }
+
+            var transitions = EventsFrom(s);
+            var transitionNames = transitions.Select(
+                (x) => Enum.GetName(typeof(TEventEnum), x));
+            var missingTransitions = transitionNames.Where(
+                x => state.Transitions.All(y => y.EventName != x));
+            state.Transitions = state.Transitions.Concat(
+                missingTransitions.Select(x => {
+                    var t = new FsmTransition();
+                    t.FsmEvent = targetFsm.GetEvent(x);
+                    return t;
+                })).ToArray();
+
+            foreach (var t in state.Transitions) {
+                if (transitionNames.Contains(t.EventName)) {
+                    t.ColorIndex = 5;
+                    t.LinkStyle = FsmTransition.CustomLinkStyle.Circuit;
+                }
+            }
+        }
+
+        foreach (FSMVariableWrapper wrapper in GetWrappedVariables()) {
+            if (wrapper.name != "" && !targetFsm.Variables.Contains(wrapper.name)) {
+                wrapper.AddTo(targetFsm.Variables);
+            }
+            wrapper.Initialise(fsm);
+        }
+
+        targetFsm.UpdateStateChanges();
+        targetFsm.ForcePreprocess();
+        UnityEditor.EditorUtility.SetDirty(fsm);
+        yield return new WaitForEndOfFrame();
     }
 #endif
 }
