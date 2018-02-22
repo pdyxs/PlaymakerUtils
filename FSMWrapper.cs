@@ -59,7 +59,7 @@ public abstract class FSMWrapper : MonoBehaviour
     {
         get
         {
-            var root = UnityEditor.PrefabUtility.FindPrefabRoot(gameObject);
+            var root = (GameObject)UnityEditor.PrefabUtility.GetPrefabParent(gameObject);
             if (root != null && root != gameObject) {
                 FSMWrapper pfsmwrapper = root.GetComponent<FSMWrapper>();
                 if (pfsmwrapper != null)
@@ -148,6 +148,9 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
 
     public override void OnStateEntered(string state)
     {
+        if (state == "") {
+            return;
+        }
         currentState = (TStateEnum)Enum.Parse(typeof(TStateEnum), state);
         OnStateEntered(currentState);
     }
@@ -156,7 +159,8 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
 
     public override void SendEvent(TEventEnum eventType)
     {
-        if (!EventsFrom(currentState).Contains(eventType))
+        if (Array.IndexOf(GlobalEvents(), eventType) < 0 &&
+            Array.IndexOf(EventsFrom(currentState), eventType) < 0)
         {
             Debug.LogError("Event " + eventType + " should not be fired" +
                            " from current state " + currentState);
@@ -164,6 +168,8 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
 
         base.SendEvent(eventType);
     }
+
+    protected abstract TEventEnum[] GlobalEvents();
 
     protected abstract TEventEnum[] EventsFrom(TStateEnum state);
 
@@ -193,11 +199,18 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
 
         if (gameObject.activeInHierarchy)
         {
-            StartCoroutine(ApplyStates());
+            StartCoroutine(DoApplyStates());
+        } else {
+            ApplyStates();
         }
     }
 
-    IEnumerator ApplyStates()
+    IEnumerator DoApplyStates() {
+        ApplyStates();
+        yield return new WaitForEndOfFrame();
+    }
+
+    void ApplyStates()
     {
         if (!typeof(TStateEnum).IsEnum)
         {
@@ -254,14 +267,13 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
         foreach (FSMVariableWrapper wrapper in GetWrappedVariables()) {
             if (wrapper.name != "" && !targetFsm.Variables.Contains(wrapper.name)) {
                 wrapper.AddTo(targetFsm.Variables);
+                wrapper.Initialise(fsm);
             }
-            wrapper.Initialise(fsm);
         }
 
         targetFsm.UpdateStateChanges();
         targetFsm.ForcePreprocess();
         UnityEditor.EditorUtility.SetDirty(fsm);
-        yield return new WaitForEndOfFrame();
     }
 #endif
 }
