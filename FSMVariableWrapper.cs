@@ -360,7 +360,12 @@ public class FSMBehaviourWrapper<TObjectType> : FSMVariableWrapper<TObjectType>
 
     protected override void SetValue(TObjectType to)
     {
-        fsm.FsmVariables.FindFsmGameObject(name).SafeAssign(to.gameObject);
+        if (to != null)
+        {
+            fsm.FsmVariables.FindFsmGameObject(name).Value = to.gameObject;
+        } else {
+            fsm.FsmVariables.FindFsmGameObject(name).Value = null;
+        }
     }
 
 #if UNITY_EDITOR
