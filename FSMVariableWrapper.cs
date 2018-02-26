@@ -31,6 +31,11 @@ public abstract class FSMVariableWrapper<TObjectType> : FSMVariableWrapper
             return GetValue();
         }
         set {
+#if UNITY_EDITOR
+            if (!Application.isPlaying) {
+                return;
+            }
+#endif
             SetValue(value);
         }
     }
