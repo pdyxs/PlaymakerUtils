@@ -155,7 +155,7 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
             currentState = (TStateEnum)Enum.Parse(typeof(TStateEnum), state);
             OnStateEntered(currentState);
         } catch (Exception e) {
-            Debug.LogError(e.StackTrace);
+            Debug.LogError("Error in " + gameObject.name + " entering State " + state + ":\n" + e.StackTrace);
         }
     }
 
