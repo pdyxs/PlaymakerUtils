@@ -151,8 +151,12 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
         if (state == "") {
             return;
         }
-        currentState = (TStateEnum)Enum.Parse(typeof(TStateEnum), state);
-        OnStateEntered(currentState);
+        try {
+            currentState = (TStateEnum)Enum.Parse(typeof(TStateEnum), state);
+            OnStateEntered(currentState);
+        } catch (Exception e) {
+            Debug.LogError(e.StackTrace);
+        }
     }
 
     public abstract void OnStateEntered(TStateEnum state);
