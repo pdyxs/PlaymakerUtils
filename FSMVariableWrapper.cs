@@ -350,7 +350,7 @@ public class FSMGameObjectWrapper : FSMVariableWrapper<GameObject>
 
 [System.Serializable]
 public class FSMBehaviourWrapper<TObjectType> : FSMVariableWrapper<TObjectType>
-    where TObjectType : MonoBehaviour
+    where TObjectType : Component
 {
     protected override TObjectType GetValue()
     {
