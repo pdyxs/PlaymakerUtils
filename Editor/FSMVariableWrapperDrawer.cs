@@ -25,7 +25,7 @@ public class FSMVariableWrapperDrawer : PropertyDrawer {
             return;
         }
 
-        EditorGUI.PropertyField(position, prop, label);
+        EditorGUI.PropertyField(position, prop, new GUIContent("FSM: " + label.text));
 
         var name = property.FindPropertyRelative("name");
         if (name != null) {
