@@ -262,7 +262,7 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
 
             foreach (var t in state.Transitions) {
                 if (transitionNames.Contains(t.EventName)) {
-                    t.ColorIndex = 5;
+                    t.ColorIndex = 4;
                     t.LinkStyle = FsmTransition.CustomLinkStyle.Circuit;
                 }
             }
