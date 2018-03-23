@@ -161,13 +161,42 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
 
     public abstract void OnStateEntered(TStateEnum state);
 
+    private bool doesStateSendEvent(TEventEnum eventType)
+    {
+        var state = Array.Find(fsm.FsmStates, (s) => s.Name == fsm.ActiveStateName);
+        return Array.Find(state.Actions, (a) => a.Name == eventType.ToString()) != null;
+    }
+
     public override void SendEvent(TEventEnum eventType)
     {
-        if (Array.IndexOf(GlobalEvents(), eventType) < 0 &&
-            Array.IndexOf(EventsFrom(currentState), eventType) < 0)
+        if (Array.IndexOf(GlobalEvents(), eventType) < 0)
         {
-            Debug.LogError("Event " + eventType + " should not be fired" +
-                           " from current state " + currentState);
+            if (Array.IndexOf(EventsFrom(currentState), eventType) < 0)
+            {
+                Debug.LogError("Event " + eventType + " should not be fired" +
+                               " from current state " + currentState);
+            }
+            
+            if (currentState.ToString() != fsm.ActiveStateName &&
+                !doesStateSendEvent(eventType))
+            {
+                StartCoroutine(WaitToSendEvent(eventType));
+                return;
+            }
+        }
+
+        base.SendEvent(eventType);
+    }
+
+    private IEnumerator WaitToSendEvent(TEventEnum eventType)
+    {
+        yield return null;
+        yield return null;
+        if (currentState.ToString() != fsm.ActiveStateName &&
+            !doesStateSendEvent(eventType))
+        {
+            Debug.LogError("Event " + eventType + " is not handled by " +
+                        " intermediate state " + fsm.ActiveStateName);
         }
 
         base.SendEvent(eventType);
