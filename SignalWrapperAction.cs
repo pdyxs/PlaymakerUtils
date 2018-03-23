@@ -8,7 +8,7 @@ namespace HutongGames.PlayMaker.Actions
     {
         protected override void DoAction()
         {
-            actor.OnStateEntered(actor.fsm.ActiveStateName);
+            actor.StateEntered(actor.fsm.ActiveStateName);
         }
     }
 }
