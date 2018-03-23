@@ -164,7 +164,7 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
     private bool doesStateSendEvent(TEventEnum eventType)
     {
         var state = Array.Find(fsm.FsmStates, (s) => s.Name == fsm.ActiveStateName);
-        return Array.Find(state.Actions, (a) => a.Name == eventType.ToString()) != null;
+        return Array.Find(state.Transitions, (a) => a.EventName == eventType.ToString()) != null;
     }
 
     public override void SendEvent(TEventEnum eventType)
@@ -173,7 +173,8 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
         {
             if (Array.IndexOf(EventsFrom(currentState), eventType) < 0)
             {
-                Debug.LogError("Event " + eventType + " should not be fired" +
+                Debug.LogError(gameObject.name + " (" + this.GetType().ToString() + "): " +
+                               "Event " + eventType + " should not be fired" +
                                " from current state " + currentState);
             }
             
@@ -195,7 +196,8 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
         if (currentState.ToString() != fsm.ActiveStateName &&
             !doesStateSendEvent(eventType))
         {
-            Debug.LogError("Event " + eventType + " is not handled by " +
+            Debug.LogError(gameObject.name + "(" + this.GetType().ToString() + "): " +
+                           "Event " + eventType + " is not handled by " +
                         " intermediate state " + fsm.ActiveStateName);
         }
 
