@@ -184,13 +184,18 @@ public abstract class FSMWrapper<TEventEnum> :
         {
             fsm.SendEvent(System.Enum.GetName(typeof(TEventEnum), eventType));
         }
+        else
+        {
+            //for now, we'll send the event either way
+            fsm.SendEvent(System.Enum.GetName(typeof(TEventEnum), eventType));
+        }
     }
 
     protected bool isGlobalEvent(TEventEnum eventType)
     {
         if (this is IFSMGlobalEventSpecifier<TEventEnum>)
         {
-            (this as IFSMGlobalEventSpecifier<TEventEnum>).isGlobalEvent(eventType);
+            return (this as IFSMGlobalEventSpecifier<TEventEnum>).isGlobalEvent(eventType);
         }
 
         return false;
@@ -234,8 +239,6 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
     [System.Serializable]
     public class TStateEvent : UnityEvent<TStateEnum> {}
 
-    public TStateEvent OnStateEntered;
-
     public TStateEnum currentState
     {
         get; private set;
@@ -253,7 +256,6 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
             {
                 currentState = (TStateEnum) Enum.Parse(typeof(TStateEnum), state);
                 (this as IFSMStateHandler<TStateEnum>).StateEntered(currentState);
-                OnStateEntered.Invoke(currentState);
             }
             catch (Exception e)
             {
@@ -278,6 +280,10 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
 
     protected override bool ShouldWaitToSendEvent(TEventEnum eventType, int attemptNumber)
     {
+        if (this.GetType().ToString() == "ScanActor")
+        {
+            var test = 3;
+        }
         return !isGlobalEvent(eventType) && attemptNumber < 2 && !fsmActiveStateCanFire(eventType);
     }
 
