@@ -280,11 +280,8 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
 
     protected override bool ShouldWaitToSendEvent(TEventEnum eventType, int attemptNumber)
     {
-        if (this.GetType().ToString() == "ScanActor")
-        {
-            var test = 3;
-        }
-        return !isGlobalEvent(eventType) && attemptNumber < 2 && !fsmActiveStateCanFire(eventType);
+        return !isGlobalEvent(eventType) && attemptNumber < 2 && 
+               (!currentStateCanFire(eventType) || !fsmActiveStateCanFire(eventType));
     }
 
     protected override bool CanSendEvent(TEventEnum eventType)
