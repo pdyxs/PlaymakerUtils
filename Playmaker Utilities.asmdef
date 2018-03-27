@@ -1,0 +1,8 @@
+{
+    "name": "PlaymakerUtilities",
+    "references": [
+        "UnityUitilities"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": []
+}

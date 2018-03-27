@@ -1,0 +1,10 @@
+{
+    "name": "PlaymakerUtilitiesEditor",
+    "references": [
+        "PlaymakerUtilities"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}
