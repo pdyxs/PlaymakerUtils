@@ -24,7 +24,7 @@ public static class FSMStateHandlerApplier
 			bool shouldContainSignal = false;
 			if (allStateNames.Contains(state.Name))
 			{
-				state.ColorIndex = 5;
+				state.ColorIndex = (fsmw as IFSMStateDescriber).stateColour;
 				if (fsmw is IFSMStateHandler<TStateEnum>)
 				{
 					shouldContainSignal = true;

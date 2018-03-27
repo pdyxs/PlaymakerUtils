@@ -150,7 +150,9 @@ public abstract class FSMWrapper<TEventEnum> :
     FSMWrapper
     where TEventEnum:IConvertible
 {
-
+    [FSMColour]
+    public int eventColour = 4;
+    
     protected virtual bool ShouldWaitToSendEvent(TEventEnum eventType, int attemptNumber)
     {
         return false;
@@ -230,11 +232,22 @@ public abstract class FSMWrapper<TEventEnum> :
 #endif
 }
 
+public interface IFSMStateDescriber
+{
+    int stateColour { get; }
+}
+
 public abstract class FSMWrapper<TEventEnum, TStateEnum> :
-    FSMWrapper<TEventEnum>
+    FSMWrapper<TEventEnum>,
+    IFSMStateDescriber 
     where TEventEnum : IConvertible
     where TStateEnum : IConvertible
 {
+    [FSMColour]
+    [SerializeField]
+    private int _stateColour = 5;
+
+    public int stateColour { get { return _stateColour; } }
     
     [System.Serializable]
     public class TStateEvent : UnityEvent<TStateEnum> {}
@@ -337,7 +350,7 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
         {
             var state = new FsmState(targetFsm);
             state.Name = x;
-            state.ColorIndex = 5;
+            state.ColorIndex = stateColour;
             return state;
         })).ToArray();
     }

@@ -26,7 +26,7 @@ public static class FSMEventRoutesApplier
     }
     
 #if UNITY_EDITOR
-    public static void Apply<TEventEnum, TStateEnum>(FSMWrapper fsmw)
+    public static void Apply<TEventEnum, TStateEnum>(FSMWrapper<TEventEnum> fsmw)
         where TStateEnum : IConvertible
         where TEventEnum : IConvertible
     {
@@ -53,7 +53,7 @@ public static class FSMEventRoutesApplier
 
             foreach (var t in state.Transitions) {
                 if (transitionNames.Contains(t.EventName)) {
-                    t.ColorIndex = 4;
+                    t.ColorIndex = fsmw.eventColour;
                     t.LinkStyle = FsmTransition.CustomLinkStyle.Circuit;
                 }
             }
