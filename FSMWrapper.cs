@@ -44,6 +44,7 @@ public abstract class FSMWrapper : MonoBehaviour
 #endif
 {
     [SerializeField]
+    [DefaultOwnerObject]
     private PlayMakerFSM m_fsm;
     public PlayMakerFSM fsm
     {

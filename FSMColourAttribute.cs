@@ -1,7 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
-public class FSMColourAttribute : PropertyAttribute {
-
+[AttributeUsage(AttributeTargets.Field)]
+public class FSMColourAttribute : 
+    PropertyAttribute 
+{
 }

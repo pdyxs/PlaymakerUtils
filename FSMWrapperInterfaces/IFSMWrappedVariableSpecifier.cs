@@ -1,10 +1,4 @@
-﻿using System;
-using HutongGames.PlayMaker;
-using HutongGames.PlayMaker.Actions;
-#if UNITY_EDITOR
-using System.Linq;
-#endif
-
+﻿
 public interface IFSMWrappedVariableSpecifier
 {
     FSMVariableWrapper[] GetWrappedVariables();
