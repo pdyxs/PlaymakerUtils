@@ -6,7 +6,8 @@ public class DroppableFSMWrapper :
 	FSMWrapper<DroppableFSMWrapper.Events, DroppableFSMWrapper.States>,
 	IFSMEventRouteSpecifier<DroppableFSMWrapper.Events, DroppableFSMWrapper.States>,
 	IFSMWrappedVariableSpecifier,
-	IDroppableHandler 
+	IDroppableDroppedHandler,
+	IDroppableHoverHandler
 {
 	public enum Events
 	{
@@ -57,7 +58,10 @@ public class DroppableFSMWrapper :
 	public void OnHoverEnd(Draggable draggable)
 	{
 		dragging.val = draggable;
-		SendEvent(Events.EndHover);
+		if (currentState == States.Hovering)
+		{
+			SendEvent(Events.EndHover);
+		}
 	}
 
 	public void OnDropped(Draggable draggable)

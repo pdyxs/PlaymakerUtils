@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DraggableFSMWrapper: FSMWrapper {
+public class DraggableFSMWrapper : FSMWrapper
+{
 
 	
 }
