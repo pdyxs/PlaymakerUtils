@@ -263,12 +263,13 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
         if (state == "") {
             return;
         }
+        
+        currentState = (TStateEnum) Enum.Parse(typeof(TStateEnum), state);
 
         if (this is IFSMStateHandler<TStateEnum>)
         {
             try
             {
-                currentState = (TStateEnum) Enum.Parse(typeof(TStateEnum), state);
                 (this as IFSMStateHandler<TStateEnum>).StateEntered(currentState);
             }
             catch (Exception e)
