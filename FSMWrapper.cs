@@ -48,7 +48,7 @@ public abstract class FSMWrapper : MonoBehaviour
     private PlayMakerFSM m_fsm;
     public PlayMakerFSM fsm
     {
-        get
+        get 
         {
             if (m_fsm == null)
             {
@@ -235,11 +235,20 @@ public abstract class FSMWrapper<TEventEnum> :
 
 public interface IFSMStateDescriber
 {
+    Type stateType { get; }
     int stateColour { get; }
+}
+
+public interface IFSMStateWrapper<TStateEnum>
+    where TStateEnum : IConvertible
+{
+    PlayMakerFSM fsm { get; }
+    void StateEntered(string state);
 }
 
 public abstract class FSMWrapper<TEventEnum, TStateEnum> :
     FSMWrapper<TEventEnum>,
+    IFSMStateWrapper<TStateEnum>,
     IFSMStateDescriber 
     where TEventEnum : IConvertible
     where TStateEnum : IConvertible
@@ -249,6 +258,11 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
     private int _stateColour = 5;
 
     public int stateColour { get { return _stateColour; } }
+
+    public Type stateType
+    {
+        get { return typeof(TStateEnum); }
+    }
     
     [System.Serializable]
     public class TStateEvent : UnityEvent<TStateEnum> {}

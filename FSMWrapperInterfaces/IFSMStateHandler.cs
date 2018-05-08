@@ -30,9 +30,9 @@ public static class FSMStateHandlerApplier
 
 			if (shouldContainSignal)
 			{
-				if (Array.Find(state.Actions, (a) => a is SignalWrapperAction) == null)
+				if (Array.Find(state.Actions, (a) => a is SignalWrapper) == null)
 				{
-					var newAction = new SignalWrapperAction();
+					var newAction = new SignalWrapper(typeof(TStateEnum));
 					state.Actions = new FsmStateAction[] {newAction}.Concat(
 						state.Actions
 					).ToArray();
@@ -40,7 +40,7 @@ public static class FSMStateHandlerApplier
 			}
 			else
 			{
-				var i = Array.FindIndex(state.Actions, (a) => a is SignalWrapperAction);
+				var i = Array.FindIndex(state.Actions, (a) => a is SignalWrapper);
 				if (i >= 0)
 				{
 					var dest = new FsmStateAction[state.Actions.Length - 1];
