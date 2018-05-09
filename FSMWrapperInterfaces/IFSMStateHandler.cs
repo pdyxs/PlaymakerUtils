@@ -40,7 +40,8 @@ public static class FSMStateHandlerApplier
 			}
 			else
 			{
-				var i = Array.FindIndex(state.Actions, (a) => a is SignalWrapper);
+				var i = Array.FindIndex(state.Actions, 
+					(a) => (a is SignalWrapper && (a as SignalWrapper).enumType == typeof(TStateEnum).ToString()));
 				if (i >= 0)
 				{
 					var dest = new FsmStateAction[state.Actions.Length - 1];
