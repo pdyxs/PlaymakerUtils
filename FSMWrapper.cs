@@ -319,17 +319,17 @@ public abstract class FSMWrapper<TEventEnum, TStateEnum> :
         {
             if (!currentStateCanFire(eventType))
             {
-                Debug.LogError(gameObject.name + " (" + this.GetType().ToString() + "): " +
-                               "Event " + eventType + " should not be fired" +
-                               " from current state " + currentState);
+//                Debug.LogError(gameObject.name + " (" + this.GetType().ToString() + "): " +
+//                               "Event " + eventType + " should not be fired" +
+//                               " from current state " + currentState);
                 return false;
             }
             
             if (!fsmActiveStateCanFire(eventType))
             {
-                Debug.LogError(gameObject.name + "(" + this.GetType().ToString() + "): " +
-                               "Event " + eventType + " is not handled by " +
-                               " intermediate state " + fsm.ActiveStateName);
+//                Debug.LogError(gameObject.name + "(" + this.GetType().ToString() + "): " +
+//                               "Event " + eventType + " is not handled by " +
+//                               " intermediate state " + fsm.ActiveStateName);
                 return false;
             }
         }
