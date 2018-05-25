@@ -40,6 +40,11 @@ public abstract class FSMVariableWrapper<TObjectType> : FSMVariableWrapper
         }
     }
 
+    public static implicit operator TObjectType(FSMVariableWrapper<TObjectType> wobj)
+    {
+        return wobj.val;
+    }
+
     public override void Initialise(PlayMakerFSM fsm)
     {
         this.fsm = fsm;
