@@ -37,7 +37,6 @@ using UnityEngine.Events;
 //}
 //
 
-[RequireComponent(typeof(PlayMakerFSM))]
 public abstract class FSMWrapper : MonoBehaviour
 #if UNITY_EDITOR
     ,ISerializationCallbackReceiver
